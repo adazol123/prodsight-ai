@@ -5,9 +5,9 @@ export const info = {
     'a smart habit tracker for remote teams',
     'personal financial planning app',
     'e-learning platform',
-    'ai writting assistant'
+    'ai writing assistant'
   ],
-  tagline: 'The Smartest Way to Build Products—Fast.',
+  tagline: 'The Smarter Way to Build Products—Fast.',
   tagline_description:
     'Your AI-powered co-pilot for product development. It helps you plan, organize, and build your next big idea—without burning out. Stay focused on the vision, we’ll handle the messy parts.',
   tagline_details: [
