@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Outfit, Geist_Mono } from 'next/font/google'
 import '../styles/css/globals.css'
-
+import HeaderSection from './_components/header-section'
+import LoginModal from './_components/login-modal'
+import ProjectModal from './_components/project-modal'
 const outfit = Outfit({
   variable: '--font-outfit',
   subsets: ['latin']
@@ -26,7 +28,10 @@ export default function RootLayout ({
   return (
     <html lang='en'>
       <body className={`${outfit.variable} ${geistMono.variable} antialiased`}>
+        <HeaderSection />
         {children}
+        <LoginModal />
+        <ProjectModal />
       </body>
     </html>
   )
