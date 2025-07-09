@@ -127,7 +127,7 @@ const FeaturesSection = () => {
                       <Image
                         src={info.features[currentSlide].thumbnail}
                         alt={info.features[currentSlide].title}
-                        className='h-full w-full object-cover select-none'
+                        className='h-full w-full object-cover select-none pointer-events-none'
                         fill
                       />
                     </motion.div>
