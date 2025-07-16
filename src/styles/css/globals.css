@@ -2,11 +2,13 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
 @property --border-angle {
-    inherits: false;
-    initial-value: 0deg;
-    syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+  syntax: '<angle>';
 }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,13 +48,19 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --animate-border: 'border 4s linear infinite'
+  --animate-border: 'border 4s linear infinite';
+
+  --shadow-input: 
+    0px 2px 3px -1px rgba(0, 0, 0, 0.1),
+    0px 1px 0px 0px rgba(25, 28, 33, 0.02),
+    0px 0px 0px 1px rgba(25, 28, 33, 0.08);
 
 
-
-  @keyframes border {
-    to { '--border-angle': '360deg'}
-  }
+  /* @keyframes border {
+    to {
+      '--border-angle': '360deg';
+    }
+  } */
 }
 
 :root {
@@ -88,6 +96,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --glass-bg: oklch(0.97 0 0 / 0.2);
+  --glass-border: oklch(0.922 0 0 / 0.1);
+}
+
+.glassy {
+  background-color: var(--glass-bg) ;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
 }
 
 .dark {
@@ -122,15 +139,115 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --glass-bg: oklch(0.205 0 0 / 0.5);
+  --glass-border: oklch(0.293 0 0 / 0.6);
+}
+
+.overlay-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.overlay-content {
+  background: rgb(246, 63, 42, 0.2);
+  backdrop-filter: blur(3px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  will-change: opacity;
+}
+
+.modal-content {
+  width: 75%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  will-change: transform;
+}
+
+.modal-content p {
+  color: #f5f5f5;
+}
+
+.modal-content header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+button.delete {
+  background-color: #f5f5f5;
+  color: #0f1115;
+  border-radius: 20px;
+  padding: 10px 20px;
+}
+
+.gradient-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+}
+
+.expanding-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(68, 65, 80, 0.8);
+  filter: blur(15px);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.gradient-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  width: 200%;
+  aspect-ratio: 1;
+  will-change: transform;
+}
+
+.top-left {
+  background: rgb(246, 63, 42, 0.9);
+}
+
+.bottom-right {
+  background: rgb(243, 92, 76, 0.9);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 
-  
+
 }

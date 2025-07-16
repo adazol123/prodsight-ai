@@ -1,193 +1,368 @@
-'use client'
-import { useState } from 'react'
+"use client";
+import { Button } from "@/components/shared/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose
-} from '@/components/shared/dialog'
-import { Button } from '@/components/shared/button'
-import { Input } from '@/components/shared/input'
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react'
-import { useProjectModalStore } from './project-modal-store'
+  DialogHeader,
+  DialogTitle,
+} from "@/components/shared/dialog";
+import { Input } from "@/components/shared/input";
+import { Label } from "@/components/shared/label";
+import { Textarea } from "@/components/shared/textarea";
+import { cn } from "@/lib/utils";
+import { getAccessToken } from "@/utils/supabase/client";
+import axios, { AxiosError } from "axios";
+import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useTransition } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useProjectModalStore } from "../../store/project-modal-store";
 
-export default function ProjectModal ({
+type ProjectFiendFormType = {
+  title: string;
+  about?: string;
+  timeline?: string;
+  budget?: string;
+  headcount?: string;
+  techstack?: string;
+};
+
+export default function ProjectModal({
   open,
-  onOpenChange
+  onOpenChange,
 }: {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const storeOpen = useProjectModalStore(state => state.open)
-  const setStoreOpen = useProjectModalStore(state => state.setOpen)
-  const isControlled = typeof open === 'boolean'
-  const modalOpen = isControlled ? open : storeOpen
-  const handleOpenChange = isControlled ? onOpenChange : setStoreOpen
+  const navigate = useRouter();
+  const storeOpen = useProjectModalStore((state) => state.open);
+  const setStoreOpen = useProjectModalStore((state) => state.setOpen);
+  const isControlled = typeof open === "boolean";
+  const modalOpen = isControlled ? open : storeOpen;
+  const handleOpenChange = isControlled ? onOpenChange : setStoreOpen;
+  const searchParams = useSearchParams();
+  const pretitle = searchParams.get("title");
+  const [isPending, startTransition] = useTransition();
 
-  const [form, setForm] = useState({
-    title: '',
-    about: '',
-    timeline: '',
-    budget: '',
-    headcount: '',
-    techstack: ''
-  })
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [agreed, setAgreed] = useState(false)
-  function handleChange (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
-  }
-  function handleSubmit (e: React.FormEvent) {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<ProjectFiendFormType>();
+
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+
+  React.useEffect(() => {
+    setValue("title", pretitle!, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }, [pretitle]);
+  const onSubmit: SubmitHandler<ProjectFiendFormType> = (data, e) => {
+    e?.preventDefault();
     // TODO: handle submit
-    if (!agreed) return
-    if (!!onOpenChange) {
-      onOpenChange(false)
-    }
-  }
+    if (!agreed) return;
+
+    const createNewProject = async (payload: any) => {
+      try {
+        const accessToken = await getAccessToken();
+        if (!accessToken) {
+          throw new Error("[Auth]: Unauthorized to create new project");
+        }
+        const { status, data: dataResponse } = await axios.post(
+          "/api/v1/project",
+          payload,
+          {
+            headers: {
+              access_token: accessToken,
+            },
+          }
+        );
+        if (status) {
+          throw new Error("[Fetch]: Error occurred creating new project");
+        }
+        return { result: dataResponse?.result || dataResponse, error: null };
+      } catch (error) {
+        return { error, result: null };
+      }
+    };
+
+    startTransition(async () => {
+      try {
+        const { error, result } = await createNewProject(data);
+        if (error) {
+          console.error(error);
+          if (error instanceof AxiosError) {
+            toast.error(
+              `[${error.response?.statusText}] ${error.response?.data?.message}`,
+              {
+                richColors: true,
+              }
+            );
+          } else {
+            toast.error(
+              "[Error]: Something went wrong. Please try again in a few minutes."
+            );
+          }
+          return;
+        }
+        console.log(result);
+        reset();
+        setStoreOpen(false);
+        navigate.push("/dashboard", { scroll: true });
+      } catch (error) {
+        console.error(error)
+        toast.error(
+          "[Error]: Something went wrong. Please try again in a few minutes."
+        );
+        navigate.replace("?");
+        return;
+      }
+    });
+
+    // startTransition(async () => {
+    //   try {
+    //     toast.promise(
+    //       async () => {
+    //         try {
+    //           const session = await supabase.auth.getSession();
+    //           const url = new URL("/api/v1/product", window.location.origin);
+
+    //           const { status } = await axios.post(url.href, data, {
+    //             headers: {
+    //               access_token: session.data.session?.access_token,
+    //             },
+    //           });
+    //           if (status !== 201) {
+    //             throw new Error("invalid status ");
+    //           }
+    //           reset();
+    //           setStoreOpen(false);
+    //           navigate.push("/dashboard", { scroll: true });
+    //         } catch (error) {
+    //           throw error;
+    //         }
+    //       },
+    //       {
+    //         error: () => "Error occured",
+    //         success: () => "Sucess!",
+    //       }
+    //     );
+    //   } catch (error) {
+    //     toast.custom(
+    //       (toastId) => (
+    //         <div className="flex gap-1.5 relative bg-rose-900/70 backdrop-blur-sm text-rose-50 p-4 rounded-xl">
+    //           <div className="flex items-baseline gap-0.5 pt-0.5">
+    //             <IconAlertHexagonFilled size={20} />
+    //           </div>
+    //           <div>
+    //             <h2 className="font-semibold">Oops!</h2>
+    //             <p className="text-xs">
+    //               Something went wrong creating your project. Please try again
+    //               in a few minutes.
+    //             </p>
+    //           </div>
+    //           <button
+    //             className="absolute right-2 top-2 cursor-pointer p-1"
+    //             title="Close Notification"
+    //             onClick={() => toast.dismiss(toastId)}
+    //           >
+    //             <IconX size={20} />
+    //           </button>
+    //         </div>
+    //       ),
+    //       {
+    //         duration: 30000,
+    //         dismissible: true,
+    //       }
+    //     );
+    //     return setStoreOpen(false);
+    //   }
+    // });
+  };
   return (
-    <Dialog open={modalOpen} onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <DialogHeader>
-            <DialogTitle>New Project</DialogTitle>
-            <DialogDescription>
-              Fill in the details to create your project.
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            <label className='block text-sm font-medium mb-1'>
-              Title <span className='text-red-500'>*</span>
-            </label>
-            <Input
-              name='title'
-              placeholder='Product name in mind'
-              value={form.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className='block text-sm font-medium mb-1'>About</label>
-            <textarea
-              name='about'
-              placeholder="What's your project about? Share a bit about your idea or goals so we can help you get the best results!"
-              className='w-full rounded-md border px-3 py-2 text-base shadow-xs focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
-              value={form.about}
-              onChange={handleChange}
-              required
-              rows={3}
-            />
-          </div>
-          {/* Advanced/More Options Collapsible */}
-          <div className='border rounded-lg bg-gray-50 dark:bg-[#23232b]'>
-            <button
-              type='button'
-              className='w-full flex items-center justify-between px-4 py-2 text-base font-medium text-primary hover:bg-gray-100 dark:hover:bg-[#222] rounded-t-lg transition group'
-              onClick={() => setShowAdvanced(v => !v)}
-              aria-expanded={showAdvanced}
-            >
-              <span className='flex items-center gap-2'>
-                <Sparkles className='w-5 h-5 text-amber-500' />
-                {showAdvanced
-                  ? 'Hide advanced options'
-                  : 'Want to add more details? (Optional)'}
-              </span>
-              {showAdvanced ? (
-                <ChevronUp className='w-5 h-5' />
-              ) : (
-                <ChevronDown className='w-5 h-5' />
+    <>
+      <Dialog
+        open={modalOpen}
+        onOpenChange={(e) => {
+          navigate.replace("?");
+          handleOpenChange?.(e);
+          return;
+        }}
+      >
+        <DialogContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <DialogHeader>
+              <DialogTitle>New Project</DialogTitle>
+              <DialogDescription className="text-xs">
+                Fill in the details to create your project.
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <Input
+                {...register("title", { required: true })}
+                placeholder="Product name in mind"
+              />
+              {!!errors.title && (
+                <div>
+                  <span>{errors.title.message}</span>
+                </div>
               )}
-            </button>
-            {showAdvanced && (
-              <div className='p-4 space-y-4 border-t'>
-                <div>
-                  <label className='block text-sm font-medium mb-1'>
-                    Timeline
-                  </label>
-                  <Input
-                    name='timeline'
-                    placeholder='e.g. 1 week, 3 weeks, 1 month'
-                    value={form.timeline}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium mb-1'>
-                    Budget
-                  </label>
-                  <Input
-                    name='budget'
-                    placeholder='e.g. $50 per month, PHP5,000.00 per month'
-                    value={form.budget}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium mb-1'>
-                    Headcount
-                  </label>
-                  <Input
-                    name='headcount'
-                    placeholder='How many people working on this project?'
-                    value={form.headcount}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium mb-1'>
-                    Tech Stack
-                  </label>
-                  <Input
-                    name='techstack'
-                    placeholder='e.g. React, Node.js, Python, or any tools you love!'
-                    value={form.techstack}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-          {/* Agreement Disclaimer */}
-          <div className='flex items-center md:items-end gap-2 pt-2'>
-            <input
-              type='checkbox'
-              id='agreement'
-              checked={agreed}
-              onChange={e => setAgreed(e.target.checked)}
-              className='mt-1 accent-primary w-4 h-4 rounded border-gray-300 dark:border-gray-600'
-              required
-            />
-            <label
-              htmlFor='agreement'
-              className='text-xs text-gray-600 dark:text-gray-300'
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">About</label>
+              <Textarea
+                {...register("about", { deps: "title" })}
+                placeholder="What's your project about? Share a bit about your idea or goals so we can help you get the best results!"
+                rows={4}
+              />
+            </div>
+            {/* Advanced/More Options Collapsible */}
+            <div
+              className={cn(
+                "border rounded-2xl bg-neutral-50/50 dark:bg-[#23232b] overflow-clip",
+                {
+                  "border-indigo-600": showAdvanced,
+                }
+              )}
             >
-              By submitting, you agree to our{' '}
-              <a href='/terms' className='underline hover:text-primary'>
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href='/privacy' className='underline hover:text-primary'>
-                Privacy Policy
-              </a>
-              .
-            </label>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type='button' variant='outline'>
-                Cancel
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-primary hover:bg-gray-100 dark:hover:bg-[#222] rounded-t-lg transition group"
+                onClick={() => setShowAdvanced((v) => !v)}
+                aria-expanded={showAdvanced}
+              >
+                <span className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  {showAdvanced
+                    ? "Hide advanced options"
+                    : "Want to add more details? (Optional)"}
+                </span>
+                {showAdvanced ? (
+                  <ChevronUp className="w-5 h-5" />
+                ) : (
+                  <ChevronDown className="w-5 h-5" />
+                )}
+              </button>
+              {showAdvanced && (
+                <div className="p-4 space-y-3 border-t">
+                  <LabelInputContainer>
+                    <Label
+                      htmlFor="timeline"
+                      className="block text-xs text-neutral-500 font-light mb-1"
+                    >
+                      Timeline
+                    </Label>
+                    <Input
+                      {...register("timeline")}
+                      id="timeline"
+                      placeholder="e.g. 1 week, 3 weeks, 1 month"
+                    />
+                  </LabelInputContainer>
+                  <LabelInputContainer>
+                    <Label
+                      htmlFor="budget"
+                      className="block text-xs text-neutral-500 font-light mb-1"
+                    >
+                      Budget
+                    </Label>
+                    <Input
+                      {...register("budget")}
+                      id="budget"
+                      placeholder="e.g. $50 per month, PHP5,000.00 per month"
+                    />
+                  </LabelInputContainer>
+                  <LabelInputContainer>
+                    <Label
+                      htmlFor="headcount"
+                      className="block text-xs text-neutral-500 font-light mb-1"
+                    >
+                      Headcount
+                    </Label>
+                    <Input
+                      {...register("headcount")}
+                      id="headcount"
+                      placeholder="How many people working on this project?"
+                    />
+                  </LabelInputContainer>
+                  <LabelInputContainer>
+                    <Label
+                      htmlFor="techstack"
+                      className="block text-xs text-neutral-500 font-light mb-1"
+                    >
+                      Tech Stack
+                    </Label>
+                    <Input
+                      {...register("techstack")}
+                      id="techstack"
+                      placeholder="e.g. React, Node.js, Python, or any tools you love!"
+                    />
+                  </LabelInputContainer>
+                </div>
+              )}
+            </div>
+            {/* Agreement Disclaimer */}
+            <LabelInputContainer className="flex-row items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="agreement"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-1 accent-indigo-600 w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                required
+              />
+              <Label
+                htmlFor="agreement"
+                className="text-xs text-gray-600 dark:text-gray-300 select-none"
+              >
+                By submitting, you agree to our{" "}
+                <a href="/terms" className="underline hover:text-primary">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" className="underline hover:text-primary">
+                  Privacy Policy
+                </a>
+                .
+              </Label>
+            </LabelInputContainer>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={isPending || !agreed || !isValid}>
+                {isPending ? "Building..." : "Let's Start Building!"}
               </Button>
-            </DialogClose>
-            <Button type='submit'>Let&apos;s Start Building!</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
+
+const LabelInputContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn("flex w-full flex-col space-y-2", className)}>
+      {children}
+    </div>
+  );
+};

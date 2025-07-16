@@ -1,6 +1,6 @@
 'use client'
 import { Button } from '@/components/shared/button'
-import { useLoginModal } from './login-modal-context'
+import { useLoginModal } from '../../store/login-modal-context'
 
 export default function LoginButton(props: React.ComponentProps<typeof Button>) {
   const { openModal } = useLoginModal()

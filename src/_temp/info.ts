@@ -124,3 +124,12 @@ export const info = {
     ]
   }
 }
+
+
+export const labels = {
+  // What do you want to build?
+  // Describe what you would like your app to do
+
+  // inspire me with examples
+  // categorized by business type
+}

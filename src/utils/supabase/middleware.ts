@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function updateSession (request: NextRequest) {
+export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request
   })
@@ -11,10 +11,10 @@ export async function updateSession (request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll () {
+        getAll() {
           return request.cookies.getAll()
         },
-        setAll (cookiesToSet) {
+        setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -43,6 +43,7 @@ export async function updateSession (request: NextRequest) {
   const isProtectedRoute = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
+
   if (
     isProtectedRoute &&
     !user &&
@@ -56,15 +57,14 @@ export async function updateSession (request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (!!user) {
-
-    console.log('authenticated')
+  if (!!user && !user.is_anonymous) {
+    // organic user (in authenticated session)
     const url = request.nextUrl.clone()
     if (
       request.nextUrl.pathname.startsWith('/login') ||
       request.nextUrl.pathname.startsWith('/auth')
     ) {
-      url.pathname = '/'
+      url.pathname = '/dashboard'
       return NextResponse.rewrite(url)
     }
     if (request.nextUrl.pathname === '/') {
@@ -73,7 +73,11 @@ export async function updateSession (request: NextRequest) {
     }
   }
 
- 
+  if (user?.is_anonymous && !!request.nextUrl.searchParams.get('guest')) {
+    // guest users (in anonymous session) - can toggle demo mode if has <guest> query params
+    const url = request.nextUrl.clone()
+    return NextResponse.rewrite(url)
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

@@ -1,19 +1,32 @@
 'use client'
 import { info } from '@/_temp/info'
-import { Button } from '@/components/shared/button'
+import { Badge } from '@/components/shared/badge'
 import { Input } from '@/components/shared/input'
 import { cn } from '@/lib/utils'
+import { useProjectModalStore } from '@/store/project-modal-store'
 import { backgroundTextColorVariants } from '@/styles/variants/background-color.variant'
 import { layoutVariants } from '@/styles/variants/layout.variant'
+import { SparklesIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useTypingPlaceholder } from '../_hooks/use-type-animation'
-import { Badge } from '@/components/shared/badge'
-import { SparklesIcon } from 'lucide-react'
+import NewProjectButton from './new-project-button'
 
 const HeroSection = () => {
+  const [inputValue, setInputValue] = React.useState<string>("")
   const animatedPlaceholderValue = useTypingPlaceholder(
     info.headline_input_placeholders
   )
+  const { openModal } = useProjectModalStore()
+
+  const navigate = useRouter()
+
+  const submitHandler = () => {
+    if(!inputValue) return null
+
+    navigate.replace(`?title=${inputValue}`, { scroll: false })
+    openModal()
+  }
 
   return (
     <section className={cn(layoutVariants({ className: 'min-h-dvh py-8' }))}>
@@ -44,7 +57,8 @@ const HeroSection = () => {
                 backgroundTextColorVariants({
                   bgText: 'gradient_dark',
                   className:
-                    'text-3xl md:text-6xl font-black text-center mx-auto max-w-[24ch]'
+'text-3xl md:text-6xl font-black text-center mx-auto max-w-[24ch] stroke-2 fill-black'
+
                 })
               )}
             >
@@ -57,7 +71,7 @@ const HeroSection = () => {
           <div className='relative w-full rounded-full'>
             <div
               className={cn(
-                'bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 p-[1.5px] text-white transition duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-lg hover:shadow-purple-600/20 hover:transition rounded-full animate-border'
+                'bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 p-[1.5px] text-white transition duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-lg hover:shadow-purple-600/20 hover:transition rounded-full animate-border overflow-clip'
               )}
             >
               <Input
@@ -67,11 +81,15 @@ const HeroSection = () => {
                 )}
                 type='text'
                 placeholder={animatedPlaceholderValue}
+                onChange={(e) => {
+                  e.preventDefault()
+                  setInputValue(e.target.value)
+                }}
               />
-              <Button className='absolute right-2 top-1/2 -translate-y-1/2 min-h-12 rounded-full flex items-center gap-2 md:px-8'>
+              <NewProjectButton onClick={submitHandler} disabled={!inputValue} className='absolute right-2 top-1/2 -translate-y-1/2 min-h-12 rounded-full flex items-center gap-2 md:px-8'>
                 <SparklesIcon className='w-5 h-5' />
                 Generate
-              </Button>
+              </NewProjectButton>
             </div>
           </div>
         </div>

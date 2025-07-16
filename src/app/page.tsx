@@ -5,7 +5,9 @@ import FooterSection from './_components/footer-section'
 import CtaSection from './_components/cta-section'
 import { ElegantShape } from '@/components/custom/elegant-shape'
 
-export default function Home () {
+
+export default async function Home () {
+
   return (
     <>
       <main

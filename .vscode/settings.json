@@ -1,0 +1,8 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "geminicodeassist.inlineSuggestions.enableAuto": false,
+    "editor.codeActionsOnSave": {
+        "source.removeUnusedImports": "always",
+        "source.organizeImports": "always"
+    }
+}

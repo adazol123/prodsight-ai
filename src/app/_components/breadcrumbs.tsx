@@ -39,7 +39,7 @@ export default function Breadcrumbs ({
               ) : (
                 <Link
                   href={href}
-                  className='hover:underline text-gray-700 dark:text-gray-200'
+                  className='hover:underline text-gray-700 dark:text-gray-200 capitalize'
                 >
                   {decodeURIComponent(seg)}
                 </Link>
