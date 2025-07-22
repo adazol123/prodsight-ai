@@ -30,7 +30,7 @@ const ProjectNavigationHeader = (props: ProjectNavigationHeaderProps) => {
   const { isFetching, data } = useQuery({
     queryKey: [PROJECTBYID_KEY, props.projectId],
     queryFn: async ({ queryKey }) => {
-      const { result, error } = await queryProjectById(queryKey[1]!);
+      const { result, error } = await queryProjectById<any>(queryKey[1]!);
       if (error) throw error;
       else {
         return result;
@@ -38,7 +38,7 @@ const ProjectNavigationHeader = (props: ProjectNavigationHeaderProps) => {
     },
   });
 
-  const productOverview = data?.product_overview;
+  const productOverview = data?.project_overview;
 
   // Refs for each link
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
@@ -58,7 +58,7 @@ const ProjectNavigationHeader = (props: ProjectNavigationHeaderProps) => {
   }, [pathname, props.links, segments]);
 
   return (
-    <div className="max-h-[220px] sticky top-0 z-30 bg-white flex flex-col justify-between gap-4">
+    <div className="max-h-[220px] -mx-3 px-3 sticky top-0 z-30 bg-neutral-50 flex flex-col justify-between gap-4">
       <div className="my-4">
         {isFetching ? (
           <>
@@ -84,7 +84,7 @@ const ProjectNavigationHeader = (props: ProjectNavigationHeaderProps) => {
               <Link
                 ref={(el) => (linkRefs.current[idx] = el) as unknown as any}
                 className={cn(
-                  "px-3 rounded-2xl hover:bg-muted/60 relative text-foreground/90 hover:text-foreground py-0.5 text-nowrap select-none text-sm transition-[colors]",
+                  "px-3 rounded-2xl hover:bg-muted/60 relative text-foreground/90 hover:text-foreground py-0.5 text-nowrap select-none text-xs transition-[colors]",
                   {
                     "bg-foreground text-background": isActive,
                     "pointer-events-none text-foreground/50": link.isUpcoming,

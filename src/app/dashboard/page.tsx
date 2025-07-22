@@ -57,13 +57,13 @@ const Dashboard = () => {
     ? []
     : (data?.map(
         (project: {
-          product_overview: { title: string; description: string }[];
+          project_overview: { title: string; description: string };
           id: string;
         }) => {
           return {
             id: project.id,
-            name: project.product_overview[0]?.title,
-            description: project.product_overview[0]?.description,
+            name: project.project_overview?.title,
+            description: project.project_overview?.description,
             completion: 1,
             updated: `1 minute ago`,
           };
