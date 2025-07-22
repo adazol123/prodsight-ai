@@ -1,9 +1,8 @@
-import HeroSection from './_components/hero-section'
-import FeaturesSection from './_components/features-section'
-import ProblemSolutionSection from './_components/problem-solution-section'
-import FooterSection from './_components/footer-section'
-import CtaSection from './_components/cta-section'
 import { ElegantShape } from '@/components/custom/elegant-shape'
+import CtaSection from './_components/cta-section'
+import FeaturesSection from './_components/features-section'
+import HeroSection from './_components/hero-section'
+import ProblemSolutionSection from './_components/problem-solution-section'
 
 
 export default async function Home () {
@@ -27,7 +26,6 @@ export default async function Home () {
         <FeaturesSection />
         <ProblemSolutionSection />
         <CtaSection />
-        <FooterSection />
         <div className='absolute inset-0 overflow-hidden -z-[1] pointer-events-none'>
           <ElegantShape
             delay={0.1}
