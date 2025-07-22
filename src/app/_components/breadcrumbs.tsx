@@ -14,14 +14,14 @@ export default function Breadcrumbs ({
 
   return (
     <nav
-      className={cn('mb-0.5', classes?.navClassNames)}
+      className={cn(classes?.navClassNames)}
       aria-label='Breadcrumb'
     >
-      <ol className='flex items-center gap-0.5 text-gray-500 dark:text-gray-400 text-xs'>
+      <ol className='flex items-center gap-0.5 text-neutral-300 dark:text-neutral-400 text-[0.65rem] font-light'>
         <li>
           <Link
             href='/'
-            className='hover:underline text-gray-700 dark:text-gray-200'
+            className='hover:underline underline-offset-2 text-neutral-400 dark:text-neutral-200'
           >
             Home
           </Link>
@@ -33,13 +33,13 @@ export default function Breadcrumbs ({
             <li key={href} className='flex items-center gap-0.5'>
               <span className='mx-0.5'>/</span>
               {isLast ? (
-                <span className='font-semibold text-gray-900 dark:text-white capitalize'>
+                <span className='font-semibold text-neutral-400 dark:text-white capitalize'>
                   {decodeURIComponent(seg)}
                 </span>
               ) : (
                 <Link
                   href={href}
-                  className='hover:underline text-gray-700 dark:text-gray-200 capitalize'
+                  className='hover:underline text-neutral-400 dark:text-neutral-200 capitalize'
                 >
                   {decodeURIComponent(seg)}
                 </Link>
