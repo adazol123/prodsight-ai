@@ -1,8 +1,13 @@
+import { cn } from '@/lib/utils'
+import { layoutVariants } from '@/styles/variants/layout.variant'
 import Image from 'next/image'
+import SessionStatus from './session-status'
 
 const FooterSection = () => (
   <footer className='w-full bg-[#111] text-neutral-200 pt-12 pb-6 px-4 md:px-0'>
-    <div className='max-w-7xl mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-12 md:gap-16'>
+    <div 
+    className={cn(layoutVariants({ className: "flex flex-col md:flex-row md:items-start md:justify-between gap-12 md:gap-16" }))}
+    >
       {/* Brand and description */}
       <div className='flex-1 min-w-[320px] max-w-[420px] flex flex-col gap-4'>
         <div className='flex items-center gap-4 mb-2'>
@@ -102,6 +107,7 @@ const FooterSection = () => (
       <div className='text-sm text-neutral-400'>
         Copyright 2025 | All Rights Reserved.
       </div>
+      <SessionStatus />
     </div>
   </footer>
 )
