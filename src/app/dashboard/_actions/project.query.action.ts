@@ -2,10 +2,10 @@ import { getAccessToken } from "@/utils/supabase/client";
 import axios from "axios";
 
 export const PROJECTBYID_KEY = "project_by_id";
-export const queryProjectById = async (projectId: string) => {
+export const queryProjectById = async <T extends object>(projectId: string) => {
   try {
     const accessToken = await getAccessToken();
-    const { status, data } = await axios.get(`/api/v1/project/${projectId}`, {
+    const { status, data } = await axios.get(`/api/v1/projects/${projectId}`, {
       headers: { access_token: accessToken },
     });
 
@@ -14,7 +14,7 @@ export const queryProjectById = async (projectId: string) => {
     }
 
     return {
-      result: data.result,
+      result: data.result as T,
     };
   } catch (error) {
     return {
