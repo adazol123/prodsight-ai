@@ -14,10 +14,9 @@ import { Label } from "@/components/shared/label";
 import { Textarea } from "@/components/shared/textarea";
 import { cn } from "@/lib/utils";
 import { getAccessToken } from "@/utils/supabase/client";
-import axios, { AxiosError } from "axios";
 import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useProjectModalStore } from "../../store/project-modal-store";
@@ -46,7 +45,7 @@ export default function ProjectModal({
   const handleOpenChange = isControlled ? onOpenChange : setStoreOpen;
   const searchParams = useSearchParams();
   const pretitle = searchParams.get("title");
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const {
     register,
@@ -71,121 +70,57 @@ export default function ProjectModal({
     if (!agreed) return;
 
     const createNewProject = async (payload: any) => {
+      setIsPending(true);
       try {
         const accessToken = await getAccessToken();
         if (!accessToken) {
           throw new Error("[Auth]: Unauthorized to create new project");
         }
-        const { status, data: dataResponse } = await axios.post(
-          "/api/v1/project",
-          payload,
-          {
-            headers: {
-              access_token: accessToken,
-            },
-          }
-        );
-        if (status) {
+        const { status } = await fetch("/api/v1/project", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            access_token: accessToken,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (status !== 201) {
           throw new Error("[Fetch]: Error occurred creating new project");
         }
-        return { result: dataResponse?.result || dataResponse, error: null };
       } catch (error) {
+        console.error(error);
         return { error, result: null };
+      } finally {
+        setIsPending(false);
       }
     };
 
-    startTransition(async () => {
-      try {
-        const { error, result } = await createNewProject(data);
-        if (error) {
-          console.error(error);
-          if (error instanceof AxiosError) {
-            toast.error(
-              `[${error.response?.statusText}] ${error.response?.data?.message}`,
-              {
-                richColors: true,
-              }
-            );
-          } else {
-            toast.error(
-              "[Error]: Something went wrong. Please try again in a few minutes."
-            );
-          }
-          return;
-        }
+    toast.promise(createNewProject(data), {
+      loading: (
+        <>
+          <span>Creating project...</span>
+        </>
+      ),
+      success: ({ result }) => {
         console.log(result);
         reset();
         setStoreOpen(false);
         navigate.push("/dashboard", { scroll: true });
-      } catch (error) {
-        console.error(error)
-        toast.error(
-          "[Error]: Something went wrong. Please try again in a few minutes."
-        );
-        navigate.replace("?");
-        return;
-      }
+        return {
+          type: "success",
+          message: "Sucess!",
+        };
+      },
+      error: (error) => {
+        console.error(error);
+        return {
+          type: "error",
+          message:
+            "[Error]: Something went wrong. Please try again in a few minutes.",
+        };
+      },
     });
-
-    // startTransition(async () => {
-    //   try {
-    //     toast.promise(
-    //       async () => {
-    //         try {
-    //           const session = await supabase.auth.getSession();
-    //           const url = new URL("/api/v1/product", window.location.origin);
-
-    //           const { status } = await axios.post(url.href, data, {
-    //             headers: {
-    //               access_token: session.data.session?.access_token,
-    //             },
-    //           });
-    //           if (status !== 201) {
-    //             throw new Error("invalid status ");
-    //           }
-    //           reset();
-    //           setStoreOpen(false);
-    //           navigate.push("/dashboard", { scroll: true });
-    //         } catch (error) {
-    //           throw error;
-    //         }
-    //       },
-    //       {
-    //         error: () => "Error occured",
-    //         success: () => "Sucess!",
-    //       }
-    //     );
-    //   } catch (error) {
-    //     toast.custom(
-    //       (toastId) => (
-    //         <div className="flex gap-1.5 relative bg-rose-900/70 backdrop-blur-sm text-rose-50 p-4 rounded-xl">
-    //           <div className="flex items-baseline gap-0.5 pt-0.5">
-    //             <IconAlertHexagonFilled size={20} />
-    //           </div>
-    //           <div>
-    //             <h2 className="font-semibold">Oops!</h2>
-    //             <p className="text-xs">
-    //               Something went wrong creating your project. Please try again
-    //               in a few minutes.
-    //             </p>
-    //           </div>
-    //           <button
-    //             className="absolute right-2 top-2 cursor-pointer p-1"
-    //             title="Close Notification"
-    //             onClick={() => toast.dismiss(toastId)}
-    //           >
-    //             <IconX size={20} />
-    //           </button>
-    //         </div>
-    //       ),
-    //       {
-    //         duration: 30000,
-    //         dismissible: true,
-    //       }
-    //     );
-    //     return setStoreOpen(false);
-    //   }
-    // });
   };
   return (
     <>
