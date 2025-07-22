@@ -1,62 +1,67 @@
-"use client"
-import { PROJECTBYID_KEY, queryProjectById } from '@/app/dashboard/_actions/project.query.action';
-import { Badge } from '@/components/shared/badge';
-import { Button } from '@/components/shared/button';
+"use client";
+import {
+  PROJECTBYID_KEY,
+  queryProjectById,
+} from "@/app/dashboard/_actions/project.query.action";
+import { Badge } from "@/components/shared/badge";
+import { Button } from "@/components/shared/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '@/components/shared/card';
-import { ScrollArea } from '@/components/shared/scroll-area';
-import { cn } from '@/lib/utils';
-import { IconPencil } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { DraggableUserStoryList } from './_components/draggable-user-story-list';
+  CardTitle,
+} from "@/components/shared/card";
+import { ScrollArea } from "@/components/shared/scroll-area";
+import { cn } from "@/lib/utils";
+import { IconPencil } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DraggableUserStoryList } from "./_components/draggable-user-story-list";
 
 // Define the type for a single requirement based on your data structure
 interface Requirement {
-  id: string
-  title: string
-  status: string
-  assignee: string
-  priority: string
-  difficulty: string
-  project_id: string
-  description: string
-  user_stories: string[]
-  roadmap_phase: string
-  time_to_complete: string
-  suggested_implementation: string
+  id: string;
+  title: string;
+  status: string;
+  assignee: string;
+  priority: string;
+  difficulty: string;
+  project_id: string;
+  description: string;
+  tasks_user_stories: string[];
+  roadmap_phase: string;
+  time_to_complete: string;
+  suggested_implementation: string;
 }
 
 const RequirementsPage = () => {
-  const params = useParams()
+  const params = useParams();
   const { isFetching, data } = useQuery({
     queryKey: [PROJECTBYID_KEY, params.projectId as string],
     queryFn: async ({ queryKey }) => {
-      const { result, error } = await queryProjectById(queryKey[1]!)
-      if (error) throw error
-      else return result
-    }
-  })
+      const { result, error } = await queryProjectById<{
+        requirements: Requirement[];
+      }>(queryKey[1]!);
+      if (error) throw error;
+      else return result;
+    },
+  });
 
-  const requirements: Requirement[] = data?.requirements || []
+  const requirements = data?.requirements;
   const [selectedRequirement, setSelectedRequirement] =
-    useState<Requirement | null>(null)
+    useState<Requirement | null>(null);
 
   // Set the first requirement as selected by default
   useEffect(() => {
     if (requirements.length > 0 && !selectedRequirement) {
-      setSelectedRequirement(requirements[0])
+      setSelectedRequirement(requirements[0]);
     }
-  }, [requirements, selectedRequirement])
+  }, [requirements?.length, selectedRequirement]);
 
   if (isFetching) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -66,24 +71,22 @@ const RequirementsPage = () => {
         <h2 className="text-xl font-bold mb-4">Requirements</h2>
         <div className="flex-grow overflow-y-auto max-h-[70lvh]">
           <ScrollArea className="py-0.5">
-            <div className="space-y-2 pr-2.5">
-              {requirements.map(req => (
+            <div className="space-y-1.5 pr-2.5">
+              {requirements.map((req) => (
                 <Card
                   key={req.id}
                   className={cn(
-                    'cursor-pointer transition-all hover:shadow-md',
+                    "cursor-pointer border-neutral-100 px-4 py-4 transition-all shadow-none hover:border-neutral-300",
                     selectedRequirement?.id === req.id &&
-                    'border-primary shadow-xs'
+                      "border-primary shadow-xs "
                   )}
                   onClick={() => setSelectedRequirement(req)}
                 >
-                  <CardHeader>
-                    <CardTitle className="text-base">{req.title}</CardTitle>
-                    <CardDescription className="space-x-1">
-                      <Badge>{req.priority} Priority</Badge>
-                      <Badge variant="outline">{req.status}</Badge>
-                    </CardDescription>
-                  </CardHeader>
+                  <CardTitle className="text-base">{req.title}</CardTitle>
+                  <CardDescription className="space-x-1">
+                    <Badge>{req.priority} Priority</Badge>
+                    <Badge variant="outline">{req.status}</Badge>
+                  </CardDescription>
                 </Card>
               ))}
             </div>
@@ -96,12 +99,12 @@ const RequirementsPage = () => {
         <h2 className="text-xl font-bold mb-4">Details</h2>
         <ScrollArea className="h-[calc(100vh-10px)]">
           {selectedRequirement ? (
-            <Card>
+            <Card className="border-primary">
               <CardHeader>
-                <div className='flex justify-between'>
-                <CardTitle className="text-2xl">
-                  {selectedRequirement.title}
-                </CardTitle>
+                <div className="flex justify-between">
+                  <CardTitle className="text-2xl">
+                    {selectedRequirement.title}
+                  </CardTitle>
 
                   <Button size="icon" variant="ghost">
                     <IconPencil />
@@ -125,7 +128,7 @@ const RequirementsPage = () => {
                 <div>
                   <h3 className="font-semibold">User Stories</h3>
                   <DraggableUserStoryList
-                    stories={selectedRequirement.user_stories}
+                    stories={selectedRequirement.tasks_user_stories}
                   />
                 </div>
                 <div>
@@ -164,7 +167,7 @@ const RequirementsPage = () => {
         </ScrollArea>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RequirementsPage
+export default RequirementsPage;
