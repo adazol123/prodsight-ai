@@ -64,63 +64,96 @@ export default function ProjectModal({
       shouldDirty: true,
     });
   }, [pretitle]);
-  const onSubmit: SubmitHandler<ProjectFiendFormType> = (data, e) => {
+  const onSubmit: SubmitHandler<ProjectFiendFormType> = async (data, e) => {
     e?.preventDefault();
     // TODO: handle submit
     if (!agreed) return;
 
-    const createNewProject = async (payload: any) => {
-      setIsPending(true);
-      try {
-        const accessToken = await getAccessToken();
-        if (!accessToken) {
-          throw new Error("[Auth]: Unauthorized to create new project");
-        }
-        const { status } = await fetch("/api/v1/project", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            access_token: accessToken,
-          },
-          body: JSON.stringify(payload),
-        });
+    setIsPending(true);
+    const toastId = toast.loading("Creating project...");
 
-        if (status !== 201) {
-          throw new Error("[Fetch]: Error occurred creating new project");
-        }
-      } catch (error) {
-        console.error(error);
-        return { error, result: null };
-      } finally {
-        setIsPending(false);
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error("[Auth]: Unauthorized to create new project");
       }
-    };
 
-    toast.promise(createNewProject(data), {
-      loading: (
-        <>
-          <span>Creating project...</span>
-        </>
-      ),
-      success: ({ result }) => {
-        console.log(result);
-        reset();
-        setStoreOpen(false);
-        navigate.push("/dashboard", { scroll: true });
-        return {
-          type: "success",
-          message: "Sucess!",
-        };
-      },
-      error: (error) => {
-        console.error(error);
-        return {
-          type: "error",
-          message:
-            "[Error]: Something went wrong. Please try again in a few minutes.",
-        };
-      },
-    });
+      const response = await fetch("/api/v1/project", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          access_token: accessToken,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok || !response.body) {
+        const errorText = await response
+          .text()
+          .catch(() => "Unknown server error");
+        throw new Error(
+          `[Fetch]: Error creating new project. Status: ${response.status}. ${errorText}`
+        );
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finalResult: Partial<ProjectFiendFormType> | null = null;
+
+      const processLine = (line: string) => {
+        if (!line) return;
+        try {
+          if (line.startsWith("data:")) {
+            line = line.substring(5).trim();
+          }
+          const update = JSON.parse(line);
+          if (update.status) {
+            toast.loading(update.status, { id: toastId });
+          }
+          if (update.result) {
+            finalResult = update.result;
+          }
+        } catch {
+          toast.loading(line, { id: toastId });
+        }
+      };
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          if (buffer.length > 0) processLine(buffer);
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          processLine(line);
+        }
+      }
+
+      toast.success("Project created successfully!", {
+        id: toastId,
+      });
+
+      console.log(finalResult);
+      reset();
+      setStoreOpen(false);
+      navigate.push("/dashboard", { scroll: true });
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "[Error]: Something went wrong. Please try again in a few minutes.",
+        { id: toastId }
+      );
+    } finally {
+      setIsPending(false);
+    }
   };
   return (
     <>
