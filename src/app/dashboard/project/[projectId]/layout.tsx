@@ -74,7 +74,7 @@ const ProjectNavigationLayout = async ({
     <div
       className={cn(
         layoutVariants({
-          className: "mx-auto px-4 md:px-8 flex-1 flex flex-col",
+          className: "mx-auto px-4 md:px-8 flex-1 flex flex-col min-h-lvh",
         })
       )}
     >
