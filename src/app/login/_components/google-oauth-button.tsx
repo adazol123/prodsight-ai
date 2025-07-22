@@ -1,6 +1,6 @@
 'use client'
-import React from 'react'
 import { Button } from '@/components/shared/button'
+import { useTurnstileStore } from '@/store/turnstile-widget-store'
 import { createClient } from '@/utils/supabase/client'
 const supabase = createClient()
 
@@ -13,10 +13,12 @@ const getURL = () => {
   return url + "/dashboard"
 }
 const GoogleOauthButton = () => {
+  const captcha = useTurnstileStore()._captcha_token
   return (
     <Button
       type='button'
       variant='outline'
+      disabled={!captcha}
       className='w-full flex items-center justify-center gap-2'
       onClick={async () => {
         await supabase.auth.signInWithOAuth({
@@ -26,7 +28,7 @@ const GoogleOauthButton = () => {
               access_type: 'offline',
               prompt: 'consent',
             },
-            redirectTo: getURL()
+            redirectTo: getURL(),
           },
         })
 

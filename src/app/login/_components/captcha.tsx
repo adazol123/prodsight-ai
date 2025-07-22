@@ -14,6 +14,10 @@ const Captcha = ({
   options?: TurnstileProps['options']
 }) => {
   const setCaptchaToken = useTurnstileStore().setCaptchaToken
+
+  React.useEffect(() => {
+    return () => setCaptchaToken(null)
+  }, []) 
   return (
     <Turnstile
       options={options}
