@@ -1,37 +1,39 @@
-'use client'
-import { info } from '@/_temp/info'
-import { Badge } from '@/components/shared/badge'
-import { Input } from '@/components/shared/input'
-import { cn } from '@/lib/utils'
-import { useProjectModalStore } from '@/store/project-modal-store'
-import { backgroundTextColorVariants } from '@/styles/variants/background-color.variant'
-import { layoutVariants } from '@/styles/variants/layout.variant'
-import { SparklesIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import React from 'react'
-import { useTypingPlaceholder } from '../_hooks/use-type-animation'
-import NewProjectButton from './new-project-button'
+"use client";
+import { info } from "@/_temp/info";
+import { Badge } from "@/components/shared/badge";
+import { Input } from "@/components/shared/input";
+import { cn } from "@/lib/utils";
+import { useProjectModalStore } from "@/store/project-modal-store";
+import { backgroundTextColorVariants } from "@/styles/variants/background-color.variant";
+import { layoutVariants } from "@/styles/variants/layout.variant";
+import { SparklesIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useTypingPlaceholder } from "../_hooks/use-type-animation";
+import NewProjectButton from "./new-project-button";
 
 const HeroSection = () => {
-  const [inputValue, setInputValue] = React.useState<string>("")
+  const [inputValue, setInputValue] = React.useState<string>("");
+  const [isSubmitting, startTransition] = React.useTransition();
   const animatedPlaceholderValue = useTypingPlaceholder(
     info.headline_input_placeholders
-  )
-  const { openModal } = useProjectModalStore()
+  );
+  const { openModal } = useProjectModalStore();
 
-  const navigate = useRouter()
+  const navigate = useRouter();
 
   const submitHandler = () => {
-    if(!inputValue) return null
-
-    navigate.replace(`?title=${inputValue}`, { scroll: false })
-    openModal()
-  }
+    if (!inputValue) return null;
+    startTransition(() => {
+      navigate.replace(`?title=${inputValue}`, { scroll: false });
+      openModal();
+    });
+  };
 
   return (
-    <section className={cn(layoutVariants({ className: 'min-h-dvh py-8' }))}>
-      <div className='max-w-[922px] mx-auto min-h-[80dvh] md:min-h-[70dvh] grid place-items-center'>
-        <div className='w-full space-y-4 '>
+    <section className={cn(layoutVariants({ className: "min-h-dvh py-8" }))}>
+      <div className="max-w-[922px] mx-auto min-h-[80dvh] md:min-h-[70dvh] grid place-items-center">
+        <div className="w-full space-y-4 ">
           {/* <h1
             className={cn(
               backgroundTextColorVariants({
@@ -43,11 +45,11 @@ const HeroSection = () => {
           >
             {info.headline}
           </h1> */}
-          <div className='space-y-2'>
-            <div className='mx-auto w-fit'>
+          <div className="space-y-2">
+            <div className="mx-auto w-fit">
               <Badge
-                variant='outline'
-                className='text-[#555] px-4 rounded-full text-xs font-light'
+                variant="outline"
+                className="text-[#555] px-4 rounded-full text-xs font-light"
               >
                 Less guessing, more building
               </Badge>
@@ -55,54 +57,68 @@ const HeroSection = () => {
             <h1
               className={cn(
                 backgroundTextColorVariants({
-                  bgText: 'gradient_dark',
+                  bgText: "gradient_dark",
                   className:
-'text-3xl md:text-6xl font-black text-center mx-auto max-w-[24ch] stroke-2 fill-black'
-
+                    "text-3xl md:text-6xl font-black text-center mx-auto max-w-[24ch] stroke-2 fill-black",
                 })
               )}
             >
               {info.tagline}
             </h1>
-            <p className='max-w-[50ch] text-base md:text-md text-center text-foreground/80 mx-auto'>
+            <p className="max-w-[50ch] text-base md:text-md text-center text-foreground/80 mx-auto">
               {info.tagline_description}
             </p>
           </div>
-          <div className='relative w-full rounded-full'>
+          <div className="relative w-full rounded-full">
             <div
               className={cn(
-                'bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 p-[1.5px] text-white transition duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-lg hover:shadow-purple-600/20 hover:transition rounded-full animate-border overflow-clip'
+                "bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 p-[1.5px] text-white transition duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-lg hover:shadow-purple-600/20 hover:transition rounded-full animate-border overflow-clip"
               )}
             >
               <Input
                 className={cn(
-                  'relative min-h-16 rounded-full w-full bg-white backdrop-blur pl-6 pr-32 border-none shadow-none text-foreground',
-                  'focus-visible:ring-[0px]'
+                  "relative min-h-16 rounded-full w-full bg-white backdrop-blur pl-6 pr-32 border-none shadow-none text-foreground",
+                  "focus-visible:ring-[0px]"
                 )}
-                type='text'
+                type="text"
                 placeholder={animatedPlaceholderValue}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    submitHandler();
+                  }
+                }}
                 onChange={(e) => {
-                  e.preventDefault()
-                  setInputValue(e.target.value)
+                  e.preventDefault();
+                  setInputValue(e.target.value);
                 }}
               />
-              <NewProjectButton onClick={submitHandler} disabled={!inputValue} className='absolute right-2 top-1/2 -translate-y-1/2 min-h-12 rounded-full flex items-center gap-2 md:px-8'>
-                <SparklesIcon className='w-5 h-5' />
-                Generate
+              <NewProjectButton
+                onClick={submitHandler}
+                disabled={isSubmitting || !inputValue}
+                className="absolute right-2 top-1/2 -translate-y-1/2 min-h-12 rounded-full flex items-center gap-2 md:px-8"
+              >
+                {isSubmitting ? (
+                  "Generating ..."
+                ) : (
+                  <>
+                    <SparklesIcon className="w-5 h-5" />
+                    Generate
+                  </>
+                )}
               </NewProjectButton>
             </div>
           </div>
         </div>
       </div>
 
-      <div className='grid place-content-center space-y-10'>
-        <div className='flex flex-wrap gap-4'>
-          {info.tagline_details.map(details => (
+      <div className="grid place-content-center space-y-10">
+        <div className="flex flex-wrap gap-4">
+          {info.tagline_details.map((details) => (
             <div
               key={details}
-              className='px-8 py-2 rounded-full border border-dashed border-foreground/30 max-w-[260px] mx-auto hover:bg-white'
+              className="px-8 py-2 rounded-full border border-dashed border-foreground/30 max-w-[260px] mx-auto hover:bg-white"
             >
-              <p className='text-center font-light text-foreground/80'>
+              <p className="text-center font-light text-foreground/80">
                 {details}
               </p>
             </div>
@@ -110,7 +126,7 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default HeroSection;
