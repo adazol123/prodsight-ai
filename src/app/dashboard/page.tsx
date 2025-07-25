@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Breadcrumbs from "../_components/breadcrumbs";
 import NewProjectButton from "../_components/new-project-button";
-import DemoBanner from "./_components/demo-banner";
 import EmptySection from "./_components/empty-section";
 import ProjectCard from "./_components/project.card";
 
@@ -106,7 +105,7 @@ const Dashboard = () => {
           )}
         >
           <Breadcrumbs classes={{ navClassNames: "mt-4" }} />
-          <DemoBanner />
+          {/* <DemoBanner /> */}
           <div className="flex items-center justify-between  mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Your Projects
