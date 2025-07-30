@@ -25,7 +25,7 @@ const HeroSection = () => {
   const submitHandler = () => {
     if (!inputValue) return null;
     startTransition(() => {
-      navigate.replace(`?title=${inputValue}`, { scroll: false });
+      navigate.push(`?title=${inputValue}`, { scroll: false });
       openModal();
     });
   };
