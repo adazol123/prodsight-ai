@@ -1,4 +1,3 @@
-import TopBanner from "@/components/custom/top-banner";
 import { Toaster } from "@/components/shared/sonner";
 import { cn } from "@/lib/utils";
 import TanstackProviders from "@/providers/tanstack.provider";
@@ -31,7 +30,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head></head>
       <body className={cn(outfit.className, "bg-neutral-50")}>
-        <TopBanner />
+        {/* <TopBanner /> */}
         <HeaderSection />
         <TanstackProviders>
           {children}

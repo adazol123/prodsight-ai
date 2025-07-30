@@ -31,12 +31,13 @@ const HeaderSection = () => {
       <nav className="flex justify-between items-center gap-4">
         <Link
           href="/"
-          className="flex items-center gap-2 select-none"
+          className="flex items-center gap-2 select-none relative"
           tabIndex={0}
           replace
         >
           <Image src={Logo} alt="ProdSight Logo" />
           <span className="hidden sm:inline">Adazolhub | ProdSight AI</span>
+          <span className="hidden sm:block text-[0.35rem] absolute -top-0.5 -right-1.5 opacity-70">BETA</span>
         </Link>
         <div className="flex gap-2 items-center">
           {!!_session && !_session?.user?.is_anonymous ? (
