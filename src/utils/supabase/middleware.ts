@@ -1,10 +1,17 @@
+import { hasSupabaseEnv } from '@/lib/utils'
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
+
+
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request
   })
+  
+  if(!hasSupabaseEnv) {
+    throw new Error("Missing supabase credentials")
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

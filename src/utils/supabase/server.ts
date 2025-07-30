@@ -1,8 +1,14 @@
+import { hasSupabaseEnv } from '@/lib/utils'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function createClient() {
   const cookieStore = await cookies()
+  
+  if(!hasSupabaseEnv) {
+    console.error("Missing supabase credentials")
+    return null
+  }
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
