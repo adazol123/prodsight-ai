@@ -78,7 +78,7 @@ export default function ProjectModal({
         throw new Error("[Auth]: Unauthorized to create new project");
       }
 
-      const response = await fetch("/api/v1/project", {
+      const response = await fetch("/api/v1/project/v2", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,11 +108,12 @@ export default function ProjectModal({
             line = line.substring(5).trim();
           }
           const update = JSON.parse(line);
-          if (update.status) {
-            toast.loading(update.status, { id: toastId });
+          if (update.data?.status) {
+            toast.loading(update.data.status, { id: toastId });
           }
-          if (update.result) {
-            finalResult = update.result;
+
+          if (update?.data?.result) {
+            finalResult = update.data?.result;
           }
         } catch {
           toast.loading(line, { id: toastId });
@@ -135,14 +136,20 @@ export default function ProjectModal({
         }
       }
 
+      if (!finalResult) {
+        return toast.error(
+          "[Error:0002]: Something went wrong. Please try again in a few minutes.",
+          { id: toastId }
+        );
+      }
+
       toast.success("Project created successfully!", {
         id: toastId,
       });
 
-      console.log(finalResult);
       reset();
       setStoreOpen(false);
-      navigate.push("/dashboard", { scroll: true });
+      navigate.replace("/dashboard", { scroll: true });
     } catch (error) {
       console.error(error);
       toast.error(
@@ -165,8 +172,11 @@ export default function ProjectModal({
           return;
         }}
       >
-        <DialogContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <DialogContent className="overflow-hidden pr-5.5">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4 pr-2 max-h-[90lvh] overflow-y-auto"
+          >
             <DialogHeader>
               <DialogTitle>New Project</DialogTitle>
               <DialogDescription className="text-xs">
@@ -294,11 +304,19 @@ export default function ProjectModal({
                 className="text-xs text-gray-600 dark:text-gray-300 select-none"
               >
                 By submitting, you agree to our{" "}
-                <a href="/terms" className="underline hover:text-primary">
+                <a
+                  href="/terms"
+                  aria-disabled
+                  className="underline hover:text-primary pointer-events-none"
+                >
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="/privacy" className="underline hover:text-primary">
+                <a
+                  href="/privacy"
+                  aria-disabled
+                  className="underline hover:text-primary pointer-events-none"
+                >
                   Privacy Policy
                 </a>
                 .
