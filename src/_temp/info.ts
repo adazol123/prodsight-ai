@@ -107,19 +107,19 @@ export const info = {
         title: 'Solo Developers',
         description:
           'Deliver more with less stress by effortlessly managing multiple projects, analyzing and organizing client requirements, and optimizing timelines and resources.',
-        thumbnail: ''
+        thumbnail: 'https://assets.prodsight.adazol.com/img/usecase_solo.jpg'
       },
       {
         title: 'Startups',
         description:
           'Move faster, validate your ideas sooner, and build smarter by using powerful market validation tools, effective sprint and release planning, and making the most of your resources.',
-        thumbnail: ''
+        thumbnail: 'https://assets.prodsight.adazol.com/img/usecase_startup.jpg'
       },
       {
-        title: 'Agencies',
+        title: 'Enterprise',
         description:
           'Your all-in-one product co-pilot, guiding you from idea to MVP with AI-assisted planning, a clear feature roadmap, and simple, effective prioritization.',
-        thumbnail: ''
+        thumbnail: 'https://assets.prodsight.adazol.com/img/usecase_enterprise.jpg'
       }
     ]
   }
