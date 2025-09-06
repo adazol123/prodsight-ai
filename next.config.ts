@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "sdmntprwestus.oaiusercontent.com",
-      },
-      {
         hostname: "assets.prodsight.adazol.com",
       },
     ],
