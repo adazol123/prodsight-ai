@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/assets/prodsight-logo-lg.svg" alt="Prodsight AI Logo" width="180" />
+  <h1>Prodsight AI</h1>
+  <p>Modern AI-powered product insights platform built with Next.js, TypeScript, and a modular component architecture.</p>
+</div>
 
-## Getting Started
+---
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Framework:** [Next.js 14+](https://nextjs.org/) (App Router, Server Components)
+- **Language:** TypeScript
+- **Styling:** Tailwind
+- **State Management:** Zustand
+- **UI:** Modular, reusable components (see `src/app/components/`)
+- **Auth:** Next.js Route Handlers, custom anonymous & login flows
+- **Data:** Supabase (see `src/utils/supabase/`)
+- **Cloud & Edge:** [Cloudflare](https://cloudflare.com/) (security, edge, DNS)
+- **Other:** TanStack Query, custom hooks, Vercel optimized
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌐 Backend API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Base URL:** https://api.prodsight.adazol.com
+- **Repository:** _Separate/private repository_
+- **Tech Stack:**
+   - [NestJS](https://nestjs.com/) (Node.js framework)
+   - [Node.js](https://nodejs.org/) & TypeScript
+   - [Gemini AI](https://ai.google.dev/gemini-api/docs) & Google GenAI
+   - [Supabase](https://supabase.com/) (auth, storage, realtime)
+   - [PostgreSQL](https://www.postgresql.org/)
+   - [Swagger](https://swagger.io/) (OpenAPI docs)
 
-## Learn More
+The backend powers all product insights, authentication, and AI features. See the backend repository for setup, endpoints, and API documentation.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Local Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Copy environment variables:**
+   ```bash
+   cp .env.example .env.local
+   # Then fill in your local values
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
+3. **Start the dev server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app/` — Main app, routing, and page components
+- `src/app/components/` — UI components (custom & shared)
+- `src/app/hooks/` — Custom React hooks
+- `src/app/lib/` — Utilities and helpers
+- `src/app/store/` — State management stores
+- `src/app/styles/` — Global and variant CSS
+- `src/utils/supabase/` — Supabase client and helpers
+- `public/` — Static assets and images
+
+---
+
+## 🔒 Authentication
+
+- Anonymous and email-based login supported
+- See `src/app/_components/anonymous-auth-status.tsx` and `src/app/login/`
+
+---
+
+## 🧩 Components
+
+- All UI is built from modular, reusable components
+- See `src/app/components/custom/` and `src/app/components/shared/`
+
+---
+
+## 🧪 Testing & Linting
+
+- Lint: `npm run lint`
+- Type check: `npm run type-check`
+- (Add your preferred testing setup)
+
+---
+
+## 🚀 Deployment
+
+- Deploy on [Vercel](https://vercel.com/) for best performance
+- See [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying)
+
+---
+
+## 📄 License
+
+MIT
