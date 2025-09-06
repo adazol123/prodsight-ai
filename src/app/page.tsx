@@ -3,6 +3,7 @@ import CtaSection from './_components/cta-section'
 import FeaturesSection from './_components/features-section'
 import HeroSection from './_components/hero-section'
 import ProblemSolutionSection from './_components/problem-solution-section'
+import UseCaseSection from './_components/use-case-section'
 
 
 export default async function Home () {
@@ -25,6 +26,7 @@ export default async function Home () {
         <HeroSection />
         <FeaturesSection />
         <ProblemSolutionSection />
+        <UseCaseSection />
         <CtaSection />
         <div className='absolute inset-0 overflow-hidden -z-[1] pointer-events-none'>
           <ElegantShape
