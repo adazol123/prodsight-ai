@@ -22,35 +22,35 @@ export const info = {
       description:
         'Create a clear project brief in minutes, so you and your team stay aligned from idea to launch.',
       thumbnail:
-        'https://sdmntprwestus.oaiusercontent.com/files/00000000-a570-6230-bda1-22ed4d8b7a56/raw?se=2025-07-08T17%3A29%3A54Z&sp=r&sv=2024-08-04&sr=b&scid=9b0dacbc-c987-551d-abc8-23cf290cca38&skoid=7399a3a4-0259-4d43-bcd6-a56ceeb4c28b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-07T22%3A28%3A39Z&ske=2025-07-08T22%3A28%3A39Z&sks=b&skv=2024-08-04&sig=59Jvll14gQieQ6mAFJ/RA0Eej/32I/RODa1/iuWDy2o%3D'
+        'https://assets.prodsight.adazol.com/img/thumbnail-feature-project-brief.jpeg'
     },
     {
       title: 'Requirements, Simplified',
       description:
         'Say goodbye to blank pages. Pick from smart, AI-generated options to shape your product requirements—no guesswork, no blocks.',
       thumbnail:
-        'https://sdmntprwestus.oaiusercontent.com/files/00000000-7238-6230-941b-877daa4fb941/raw?se=2025-07-08T17%3A29%3A54Z&sp=r&sv=2024-08-04&sr=b&scid=983b12f8-db99-55fb-8f16-1e69002f8594&skoid=7399a3a4-0259-4d43-bcd6-a56ceeb4c28b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-08T13%3A01%3A14Z&ske=2025-07-09T13%3A01%3A14Z&sks=b&skv=2024-08-04&sig=ywF8FrMkN58l3o1MvWJP0yc63wwXwr6Xx9O050Bad3E%3D'
+        'https://assets.prodsight.adazol.com/img/thumbnail-feature-requirements.jpeg'
     },
     {
       title: 'User Stories That Actually Make Sense',
       description:
         'Instantly generate user stories, scenarios, and flows that match your idea. Need a prototype? You’ll get that too (coming soon).',
       thumbnail:
-        'https://sdmntprwestus.oaiusercontent.com/files/00000000-20e0-6230-92ce-7038b1ad9182/raw?se=2025-07-08T17%3A42%3A22Z&sp=r&sv=2024-08-04&sr=b&scid=0f6fdb1d-d3fb-520c-b50f-00d719fa8505&skoid=7399a3a4-0259-4d43-bcd6-a56ceeb4c28b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-08T13%3A01%3A10Z&ske=2025-07-09T13%3A01%3A10Z&sks=b&skv=2024-08-04&sig=O9qTFqW1xXhJQC/Eq36g8mp99l3viANFbkfT5viakw8%3D'
+        'https://assets.prodsight.adazol.com/img/thumbnail-feature-user-stories.jpeg'
     },
     {
       title: 'Templates That Get You Moving',
       description:
         'From early brainstorming to scaling up, we’ve got templates for every stage. And yes, we’re always adding more.',
       thumbnail:
-        'https://sdmntprwestus.oaiusercontent.com/files/00000000-fe1c-6230-b045-854313530ad6/raw?se=2025-07-08T17%3A48%3A03Z&sp=r&sv=2024-08-04&sr=b&scid=3e3b7d34-e918-56b3-b1f6-00fb3b3eeee2&skoid=7399a3a4-0259-4d43-bcd6-a56ceeb4c28b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-07T23%3A30%3A25Z&ske=2025-07-08T23%3A30%3A25Z&sks=b&skv=2024-08-04&sig=6wFPK2usvpJWdcOAYIZAZzyO7GIfwrCad4HFw3GQMPE%3D'
+        'https://assets.prodsight.adazol.com/img/thumbnail-feature-templates.jpeg'
     },
     {
       title: 'Visual Diagrams, Auto-Generated',
       description:
         'Whether it’s an ERD, sitemap, or org chart, ProdSight turns ideas into visuals you can actually use to explain and plan (coming soon).',
       thumbnail:
-        'https://sdmntprwestus.oaiusercontent.com/files/00000000-a3e8-6230-a117-0c83a7e07a00/raw?se=2025-07-08T17%3A52%3A14Z&sp=r&sv=2024-08-04&sr=b&scid=c8c7779e-085a-500e-96b7-9de05ada7d43&skoid=7399a3a4-0259-4d43-bcd6-a56ceeb4c28b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-08T13%3A01%3A11Z&ske=2025-07-09T13%3A01%3A11Z&sks=b&skv=2024-08-04&sig=GUQWFJGEtreNS8B2BI2wcnmHfSf0y6dSul6saVxwgMk%3D'
+        'https://assets.prodsight.adazol.com/img/thumbnail-feature-visual-diagrams.jpeg'
     }
   ],
   problem: {
